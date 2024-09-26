@@ -6,30 +6,34 @@ DROP TABLE IF EXISTS person;
 CREATE TABLE person
 (
     id         SERIAL PRIMARY KEY,
+    guid       VARCHAR(55)                                   NOT NULL,
     first_name TEXT                                          NOT NULL,
     last_name  TEXT                                          NOT NULL,
     type       TEXT CHECK (type IN ('professor', 'student')) NOT NULL,
     age        INTEGER                                       NOT NULL
 );
 
-INSERT INTO person (first_name, last_name, type, age)
-VALUES ('Steve', 'Jobs', 'professor', 56),
-       ('Jeff', 'Bezos', 'professor', 60),
-       ('Larry', 'Page', 'student', 51),
-       ('Bill', 'Gates', 'student', 67),
-       ('Elon', 'Musk', 'student', 52);
+INSERT INTO person (guid, first_name, last_name, type, age)
+VALUES ('abcd', 'Steve', 'Jobs', 'professor', 56),
+       ('efgh', 'Jeff', 'Bezos', 'professor', 60),
+       ('ijkl', 'Larry', 'Page', 'student', 51),
+       ('mnop', 'Bill', 'Gates', 'student', 67),
+       ('qrst', 'Elon', 'Musk',  'student', 52),
+       ('uvwx', 'John', 'Flynn',  'student', 52),
+       ('yzab', 'John', 'Flynn',  'student', 52);
 
 -- course
 CREATE TABLE course
 (
     id   SERIAL PRIMARY KEY,
+    guid       VARCHAR(55) NOT NULL,
     name TEXT NOT NULL
 );
 
-INSERT INTO course (name)
-VALUES ('Programming'),
-       ('Databases'),
-       ('UI Design');
+INSERT INTO course (guid, name)
+VALUES ('123a', 'Programming'),
+       ('456b', 'Databases'),
+       ('789c', 'UI Design');
 
 -- person_course
 CREATE TABLE person_course
