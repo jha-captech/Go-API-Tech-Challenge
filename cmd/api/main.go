@@ -11,26 +11,38 @@ import (
 	"gorm.io/gorm"
 	"jf.go.techchallenge/internal/config"
 	"jf.go.techchallenge/internal/handler"
+	"jf.go.techchallenge/internal/services"
 )
 
 func main() {
 	fx.New(
 		fx.Provide(
-			handler.NewGetPersonsHanlder,
-			NewServeMux,
+			NewDatabase,
+			services.NewPersonService,
+			AsRoute(handler.NewGetPersonByGuid),
+			AsRoute(handler.NewGetPersonsHanlder),
 			NewHTTPServer,
-			// services.NewPersonService,
-			// NewDatabase,
+			fx.Annotate(
+				NewServeMux,
+				fx.ParamTags(`group:"routes"`),
+			),
 		),
 		fx.Invoke(func(*http.Server) {}),
 	).Run()
 }
 
-func NewServeMux(route *handler.GetPersonsHandler) *http.ServeMux {
+func AsRoute(f any) any {
+	return fx.Annotate(
+		f,
+		fx.ResultTags(`group:"routes"`),
+	)
+}
+
+func NewServeMux(routes []handler.Route) *http.ServeMux {
 	mux := http.NewServeMux()
-	// for _, route := range routes {
-	mux.Handle(route.Pattern(), route)
-	// }
+	for _, route := range routes {
+		mux.HandleFunc(route.Pattern(), route.ServeHTTP)
+	}
 	return mux
 }
 
