@@ -19,8 +19,8 @@ func main() {
 		fx.Provide(
 			NewDatabase,
 			services.NewPersonService,
-			AsRoute(handler.NewGetPersonByGuid),
-			AsRoute(handler.NewGetPersonsHanlder),
+			TagRoute(handler.GetPersonByGuid),
+			TagRoute(handler.NewGetPersonsHanlder),
 			NewHTTPServer,
 			fx.Annotate(
 				NewServeMux,
@@ -31,7 +31,7 @@ func main() {
 	).Run()
 }
 
-func AsRoute(f any) any {
+func TagRoute(f any) any {
 	return fx.Annotate(
 		f,
 		fx.ResultTags(`group:"routes"`),
@@ -41,7 +41,7 @@ func AsRoute(f any) any {
 func NewServeMux(routes []handler.Route) *http.ServeMux {
 	mux := http.NewServeMux()
 	for _, route := range routes {
-		mux.HandleFunc(route.Pattern(), route.ServeHTTP)
+		mux.HandleFunc(route.Pattern(), route.Handler())
 	}
 	return mux
 }
