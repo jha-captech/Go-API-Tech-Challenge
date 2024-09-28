@@ -23,37 +23,66 @@ func (s AppError) Status() int {
 	return s.status
 }
 
-func New(status int, msg string, a ...any) *AppError {
-	return &AppError{
+type MultiError struct {
+	status  int
+	Message string
+	Errors  []StatusError
+}
+
+func (s MultiError) Error() string {
+	return s.Message
+}
+
+func (s MultiError) Status() int {
+	return s.status
+}
+
+func New(status int, msg string, a ...any) AppError {
+	return AppError{
 		status:  status,
 		Message: fmt.Sprintf(msg, a...),
 	}
 }
 
-func NotFound(msg string, a ...any) *AppError {
+func BadRequest(msg string, a ...any) error {
+	return New(http.StatusBadRequest, msg, a...)
+}
+
+func NotFound(msg string, a ...any) error {
 	return New(http.StatusNotFound, msg, a...)
 }
 
-type MultiError struct {
-	appErrors []AppError
-}
-
-func (s MultiError) Error() string {
-	return fmt.Sprintf("Multiple Errors: %v", s.appErrors)
-}
-
-func (s MultiError) Status() int {
-	worstError := http.StatusBadRequest
-	for _, appError := range s.appErrors {
-		if appError.Status() > worstError {
-			worstError = appError.Status()
-		}
+func ConvertStatusError(err error) StatusError {
+	statusError, ok := err.(StatusError)
+	if !ok {
+		statusError = New(http.StatusInternalServerError, "Internal Server Error")
 	}
-	return worstError
+	return statusError
 }
 
-func Of(e ...AppError) *MultiError {
-	return &MultiError{
-		appErrors: e,
+func Of(e ...error) error {
+
+	if len(e) == 0 {
+		return nil
+	}
+
+	if len(e) == 1 {
+		return e[0]
+	}
+
+	worstError := http.StatusBadRequest
+	appErrors := []StatusError{}
+	for _, err := range e {
+		statusError := ConvertStatusError(err)
+		if statusError.Status() > worstError {
+			worstError = statusError.Status()
+		}
+		appErrors = append(appErrors, statusError)
+	}
+
+	return MultiError{
+		Message: "Multiple Errors:",
+		status:  worstError,
+		Errors:  appErrors,
 	}
 }

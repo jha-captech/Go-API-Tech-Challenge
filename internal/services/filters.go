@@ -1,10 +1,11 @@
 package services
 
 import (
-	"fmt"
 	"net/url"
-	"strings"
 	"regexp"
+	"strings"
+
+	"jf.go.techchallenge/internal/apperror"
 )
 
 // Utility Responsible for parsing filters from a url.
@@ -15,14 +16,13 @@ type FilterColumns map[string]string
 
 type ValidFilters []string
 
-
 var matchFirstCap = regexp.MustCompile("(.)([A-Z][a-z]+)")
-var matchAllCap   = regexp.MustCompile("([a-z0-9])([A-Z])")
+var matchAllCap = regexp.MustCompile("([a-z0-9])([A-Z])")
 
 func toSnakeCase(str string) string {
-    snake := matchFirstCap.ReplaceAllString(str, "${1}_${2}")
-    snake  = matchAllCap.ReplaceAllString(snake, "${1}_${2}")
-    return strings.ToLower(snake)
+	snake := matchFirstCap.ReplaceAllString(str, "${1}_${2}")
+	snake = matchAllCap.ReplaceAllString(snake, "${1}_${2}")
+	return strings.ToLower(snake)
 }
 
 func MakeFilterColumns(filters ValidFilters) FilterColumns {
@@ -34,17 +34,25 @@ func MakeFilterColumns(filters ValidFilters) FilterColumns {
 }
 
 func ParseURLFilters(urlParam url.Values, columnFilters FilterColumns) (Filters, error) {
-	
+
 	returnKeys := make(Filters)
+
+	errors := []error{}
 
 	for urlKey, urlParamValue := range urlParam {
 		columnName, present := columnFilters[urlKey]
+
 		if !present {
-			return nil, fmt.Errorf("invalid URL param: %s", urlKey)
+			errors = append(errors, apperror.BadRequest("Invalid Request Parameter: %s", urlKey))
 		}
+
 		if len(urlParamValue) > 0 {
 			returnKeys[columnName] = urlParamValue[0]
 		}
+	}
+
+	if len(errors) != 0 {
+		return nil, apperror.Of(errors...)
 	}
 
 	return returnKeys, nil

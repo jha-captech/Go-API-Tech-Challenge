@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 
 	"jf.go.techchallenge/internal/applog"
@@ -32,6 +33,8 @@ func (s *GetPersonsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	filters, err := services.ParseURLFilters(r.URL.Query(), validFilters)
 
 	if err != nil {
+		fmt.Println("PRinting errors ", err)
+		encodeError(w, err)
 		return
 	}
 	persons, err := s.service.GetPersons(filters)
