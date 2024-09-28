@@ -17,7 +17,7 @@ func encodeError(w http.ResponseWriter, err error) {
 	}
 }
 
-func encodeResponse[T any](w http.ResponseWriter, logger *applog.AppLogger, data T, err error) {
+func encodeResponse(w http.ResponseWriter, logger *applog.AppLogger, data any, err error) {
 
 	w.Header().Set("Content-Type", "application/json")
 
