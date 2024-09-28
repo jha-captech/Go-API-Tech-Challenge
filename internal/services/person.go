@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"gorm.io/gorm"
+	"jf.go.techchallenge/internal/apperror"
 	"jf.go.techchallenge/internal/models"
 )
 
@@ -22,18 +23,11 @@ func (s *PersonService) GetOneByGuid(guid string) (models.Person, error) {
 	var person models.Person
 	result := s.db.Table("person").First(&person, "guid = ?", guid)
 
-	/*
-		var person Person
-		result := s.database.Table("person").First(&person, "guid = ?", guid)
-		if result.Error != nil {
-			return person, apperror.New("Person Not Found")
-		}
-		return person, nil
-	*/
-	return person, result.Error
-	// if result.Error != nil {
+	if result.Error != nil {
+		return person, apperror.NotFound("Person: %s Not Found", guid)
+	}
 
-	// }
+	return person, result.Error
 }
 
 func (s *PersonService) GetPersons(filters Filters) ([]models.Person, error) {

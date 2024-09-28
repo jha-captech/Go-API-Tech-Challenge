@@ -34,7 +34,7 @@ func (s *GetPersonsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
-	persons, _ := s.service.GetPersons(filters)
+	persons, err := s.service.GetPersons(filters)
 
-	encodeResponse(w, &applog.AppLogger{}, 200, persons)
+	encodeResponse(w, &applog.AppLogger{}, persons, err)
 }
