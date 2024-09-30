@@ -27,8 +27,16 @@ func encodeResponse(w http.ResponseWriter, logger *applog.AppLogger, data any, e
 	}
 
 	if encErr := json.NewEncoder(w).Encode(data); encErr != nil {
-		logger.Fatal(fmt.Sprintf("Error while marshaling data: %v", data), err)
+		logger.Error(fmt.Sprintf("Error while marshaling data: %v", data), err)
 		encodeError(w, encErr)
+		return
+	}
+}
+
+func encodeCreated(w http.ResponseWriter, logger *applog.AppLogger, data any, err error) {
+	encodeResponse(w, logger, data, err)
+	if err == nil {
+		w.WriteHeader(http.StatusCreated)
 	}
 }
 

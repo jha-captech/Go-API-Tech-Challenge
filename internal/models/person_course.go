@@ -1,6 +1,10 @@
 package models
 
 type PersonCourse struct {
-	PersonID uint `gorm:"primaryKey" json:"-"`
-	CourseID uint `gorm:"primaryKey" json:"-"`
+	PersonID uint `gorm:"primaryKey"`
+	CourseID uint `gorm:"primaryKey"`
+}
+
+func (PersonCourse) TableName() string {
+	return "person_course"
 }

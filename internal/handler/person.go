@@ -1,0 +1,59 @@
+package handler
+
+import (
+	"net/http"
+
+	"jf.go.techchallenge/internal/applog"
+	"jf.go.techchallenge/internal/models"
+	"jf.go.techchallenge/internal/services"
+)
+
+func GetAllPersons(service *services.PersonService, logger *applog.AppLogger) Route {
+	return NewRoute("GET /api/person", func(w http.ResponseWriter, r *http.Request) {
+		persons, err := service.GetAll(r.URL.Query())
+		encodeResponse(w, logger, persons, err)
+	})
+}
+
+func CreatePerson(service *services.PersonService, logger *applog.AppLogger) Route {
+	return NewRoute("POST /api/person", func(w http.ResponseWriter, r *http.Request) {
+
+		input, err := decodeBody[models.UpdatePerson](r)
+
+		if err != nil {
+			encodeError(w, err)
+			return
+		}
+
+		person, err := service.Create(*input)
+		encodeCreated(w, logger, person, err)
+	})
+}
+
+func GetOnePerson(service *services.PersonService, logger *applog.AppLogger) Route {
+	return NewRoute("GET /api/person/{guid}", func(w http.ResponseWriter, r *http.Request) {
+		person, err := service.GetOneByGuid(r.PathValue("guid"))
+		encodeResponse(w, logger, person, err)
+	})
+}
+
+func UpdateOnePerson(service *services.PersonService, logger *applog.AppLogger) Route {
+	return NewRoute("PUT /api/person/{guid}", func(w http.ResponseWriter, r *http.Request) {
+		input, err := decodeBody[models.UpdatePerson](r)
+
+		if err != nil {
+			encodeError(w, err)
+			return
+		}
+
+		person, err := service.Update(r.PathValue("guid"), *input)
+		encodeResponse(w, logger, person, err)
+	})
+}
+
+func DeleteOnePerson(service *services.PersonService, logger *applog.AppLogger) Route {
+	return NewRoute("DELETE /api/person/{guid}", func(w http.ResponseWriter, r *http.Request) {
+		err := service.Delete(r.PathValue("guid"))
+		encodeResponse(w, logger, "OK", err)
+	})
+}

@@ -3,24 +3,35 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 	"net"
 	"net/http"
+	"os"
 
 	"go.uber.org/fx"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
+
+	"jf.go.techchallenge/internal/applog"
 	"jf.go.techchallenge/internal/config"
+	"jf.go.techchallenge/internal/database"
 	"jf.go.techchallenge/internal/handler"
+	"jf.go.techchallenge/internal/repository"
 	"jf.go.techchallenge/internal/services"
 )
 
 func main() {
 	fx.New(
 		fx.Provide(
-			NewDatabase,
+			config.New,
+			database.New,
+			func() *log.Logger { return log.New(os.Stdout, "\r\n", log.LstdFlags) },
+			applog.New,
+			repository.NewPerson,
 			services.NewPersonService,
-			TagRoute(handler.GetPersonByGuid),
-			TagRoute(handler.NewGetPersonsHanlder),
+			TagRoute(handler.GetOnePerson),
+			TagRoute(handler.GetAllPersons),
+			TagRoute(handler.CreatePerson),
+			TagRoute(handler.UpdateOnePerson),
+			TagRoute(handler.DeleteOnePerson),
 			NewHTTPServer,
 			fx.Annotate(
 				NewServeMux,
@@ -44,23 +55,6 @@ func NewServeMux(routes []handler.Route) *http.ServeMux {
 		mux.HandleFunc(route.Pattern(), route.Handler())
 	}
 	return mux
-}
-
-// Start Database
-func NewDatabase() (*gorm.DB, error) {
-	config, err := config.New()
-
-	if err != nil {
-		return nil, err
-	}
-
-	connectionString := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=5432 sslmode=disable",
-		config.Database.Host, config.Database.User, config.Database.Password, config.Database.Name)
-
-	// Connect to database.
-	return gorm.Open(postgres.Open(connectionString), &gorm.Config{
-		// Logger: newLogger, todo
-	})
 }
 
 // Start Http Server.
