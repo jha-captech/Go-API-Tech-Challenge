@@ -26,12 +26,23 @@ func main() {
 			func() *log.Logger { return log.New(os.Stdout, "\r\n", log.LstdFlags) },
 			applog.New,
 			repository.NewPerson,
-			services.NewPersonService,
+			repository.NewCourse,
+
+			services.NewPerson,
+			services.NewCourse,
+
 			TagRoute(handler.GetOnePerson),
 			TagRoute(handler.GetAllPersons),
 			TagRoute(handler.CreatePerson),
 			TagRoute(handler.UpdateOnePerson),
 			TagRoute(handler.DeleteOnePerson),
+
+			TagRoute(handler.GetOneCourse),
+			TagRoute(handler.GetAllCourses),
+			TagRoute(handler.CreateCourse),
+			TagRoute(handler.UpdateOneCourse),
+			TagRoute(handler.DeleteOneCourse),
+
 			NewHTTPServer,
 			fx.Annotate(
 				NewServeMux,

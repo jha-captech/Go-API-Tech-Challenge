@@ -8,14 +8,14 @@ import (
 	"jf.go.techchallenge/internal/services"
 )
 
-func GetAllPersons(service *services.PersonService, logger *applog.AppLogger) Route {
+func GetAllPersons(service *services.Person, logger *applog.AppLogger) Route {
 	return NewRoute("GET /api/person", func(w http.ResponseWriter, r *http.Request) {
 		persons, err := service.GetAll(r.URL.Query())
 		encodeResponse(w, logger, persons, err)
 	})
 }
 
-func CreatePerson(service *services.PersonService, logger *applog.AppLogger) Route {
+func CreatePerson(service *services.Person, logger *applog.AppLogger) Route {
 	return NewRoute("POST /api/person", func(w http.ResponseWriter, r *http.Request) {
 
 		input, err := decodeBody[models.UpdatePerson](r)
@@ -30,14 +30,14 @@ func CreatePerson(service *services.PersonService, logger *applog.AppLogger) Rou
 	})
 }
 
-func GetOnePerson(service *services.PersonService, logger *applog.AppLogger) Route {
+func GetOnePerson(service *services.Person, logger *applog.AppLogger) Route {
 	return NewRoute("GET /api/person/{guid}", func(w http.ResponseWriter, r *http.Request) {
 		person, err := service.GetOneByGuid(r.PathValue("guid"))
 		encodeResponse(w, logger, person, err)
 	})
 }
 
-func UpdateOnePerson(service *services.PersonService, logger *applog.AppLogger) Route {
+func UpdateOnePerson(service *services.Person, logger *applog.AppLogger) Route {
 	return NewRoute("PUT /api/person/{guid}", func(w http.ResponseWriter, r *http.Request) {
 		input, err := decodeBody[models.UpdatePerson](r)
 
@@ -51,7 +51,7 @@ func UpdateOnePerson(service *services.PersonService, logger *applog.AppLogger) 
 	})
 }
 
-func DeleteOnePerson(service *services.PersonService, logger *applog.AppLogger) Route {
+func DeleteOnePerson(service *services.Person, logger *applog.AppLogger) Route {
 	return NewRoute("DELETE /api/person/{guid}", func(w http.ResponseWriter, r *http.Request) {
 		err := service.Delete(r.PathValue("guid"))
 		encodeResponse(w, logger, "OK", err)

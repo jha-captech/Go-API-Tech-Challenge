@@ -22,6 +22,7 @@ func encodeResponse(w http.ResponseWriter, logger *applog.AppLogger, data any, e
 	w.Header().Set("Content-Type", "application/json")
 
 	if err != nil {
+		logger.Debug("Encoding Error: ", err)
 		encodeError(w, err)
 		return
 	}

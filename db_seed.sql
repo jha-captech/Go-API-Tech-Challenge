@@ -9,18 +9,19 @@ CREATE TABLE person
     guid       VARCHAR(55)                                   NOT NULL,
     first_name TEXT                                          NOT NULL,
     last_name  TEXT                                          NOT NULL,
+    email      TEXT                                          NOT NULL,
     type       TEXT CHECK (type IN ('professor', 'student')) NOT NULL,
     age        INTEGER                                       NOT NULL
 );
 
-INSERT INTO person (guid, first_name, last_name, type, age)
-VALUES ('abcd', 'Steve', 'Jobs', 'professor', 56),
-       ('efgh', 'Jeff', 'Bezos', 'professor', 60),
-       ('ijkl', 'Larry', 'Page', 'student', 51),
-       ('mnop', 'Bill', 'Gates', 'student', 67),
-       ('qrst', 'Elon', 'Musk',  'student', 52),
-       ('uvwx', 'John', 'Flynn',  'student', 52),
-       ('yzab', 'John', 'Flynn',  'student', 52);
+INSERT INTO person (guid, first_name, last_name, email, type, age)
+VALUES ('abcd', 'Steve', 'Jobs', 'sjobs@test.com', 'professor', 56),
+       ('efgh', 'Jeff', 'Bezos', 'jbezos@test.com', 'professor', 60),
+       ('ijkl', 'Larry', 'Page', 'lpage@test.com', 'student', 51),
+       ('mnop', 'Bill', 'Gates', 'bgates@test.com', 'student', 67),
+       ('qrst', 'Elon', 'Musk',  'emusk@test.com', 'student', 52),
+       ('uvwx', 'John', 'Flynn', 'jflynn@test.com', 'student', 52),
+       ('yzab', 'John', 'Flynn',  'jflynn2@test.com', 'student', 52);
 
 -- course
 CREATE TABLE course

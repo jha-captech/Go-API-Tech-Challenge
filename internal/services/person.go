@@ -13,37 +13,20 @@ import (
 	"jf.go.techchallenge/internal/repository"
 )
 
-type PersonService struct {
+type Person struct {
 	logger     *applog.AppLogger
-	repository repository.PersonRepository
+	repository repository.Person
 }
 
-var validFilters = MakeFilterColumns(ValidFilters{
-	"FirstName",
-	"LastName",
-	"Email",
-})
-
-func NewPersonService(logger *applog.AppLogger, repository repository.PersonRepository) *PersonService {
-	return &PersonService{
+func NewPerson(logger *applog.AppLogger, repository repository.Person) *Person {
+	return &Person{
 		logger:     logger,
 		repository: repository,
 	}
 }
 
-func (s PersonService) GetOneByGuid(guid string) (models.Person, error) {
-	person, err := s.repository.FindOne(guid)
-
-	if err != nil {
-		s.logger.Debug("Failed to query Person: ", err)
-		return person, apperror.NotFound("Person: %s Not Found", guid)
-	}
-
-	return person, err
-}
-
 // Parse dont validate https://lexi-lambda.github.io/blog/2019/11/05/parse-don-t-validate/
-func parse(input models.UpdatePerson, person *models.Person) error {
+func (s Person) parse(input models.UpdatePerson, person *models.Person) error {
 	var errors []error
 
 	if strings.Trim(input.FirstName, " ") == "" {
@@ -85,72 +68,62 @@ func parse(input models.UpdatePerson, person *models.Person) error {
 	return nil
 }
 
-func (s PersonService) Update(guid string, input models.UpdatePerson) (models.Person, error) {
+func (s Person) GetOneByGuid(guid string) (models.Person, error) {
+	return s.repository.FindOne(guid)
+}
+
+func (s Person) Update(guid string, input models.UpdatePerson) (models.Person, error) {
 	person, err := s.GetOneByGuid(guid)
 	if err != nil {
 		return person, err
 	}
 
-	err = parse(input, &person)
+	err = s.parse(input, &person)
 
 	if err != nil {
 		return person, err
 	}
 
 	err = s.repository.Save(&person)
-
-	if err != nil {
-		// todo log and return different error
-	}
-
 	return person, err
 }
 
-func (s PersonService) Delete(guid string) error {
+func (s Person) Delete(guid string) error {
 	person, err := s.GetOneByGuid(guid)
 	if err != nil {
 		return err
 	}
 	err = s.repository.Delete(&person)
 
-	if err != nil {
-		// todo log and return database error
-	}
 	return err
 }
 
-func (s PersonService) Create(input models.UpdatePerson) (models.Person, error) {
-	newPerson := models.Person{
-		Guid: uuid.NewString(),
-	}
+func (s Person) Create(input models.UpdatePerson) (models.Person, error) {
+	newPerson := models.Person{}
 
-	err := parse(input, &newPerson)
+	err := s.parse(input, &newPerson)
 
 	if err != nil {
 		return newPerson, err
 	}
-
+	newPerson.Guid = uuid.NewString()
 	err = s.repository.Save(&newPerson)
-
-	if err != nil {
-		// todo log and return different error..
-	}
 	return newPerson, err
 }
 
-func (s PersonService) GetAll(urlParams url.Values) ([]models.Person, error) {
+var personFilters = MakeFilterColumns(ValidFilters{
+	"FirstName",
+	"LastName",
+	"Email",
+})
 
-	filters, err := ParseURLFilters(urlParams, validFilters)
+func (s Person) GetAll(urlParams url.Values) ([]models.Person, error) {
+
+	filters, err := ParseURLFilters(urlParams, personFilters)
 
 	if err != nil {
 		return nil, err
 	}
 
-	persons, err := s.repository.FindAll(filters)
-
-	if err != nil {
-		// todo handle database error..
-	}
-
-	return persons, nil
+	return s.repository.FindAll(filters)
 }
