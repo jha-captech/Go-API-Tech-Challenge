@@ -2,12 +2,14 @@ package services_test
 
 import (
 	"fmt"
+	"net/url"
 	"testing"
 
 	"github.com/stretchr/testify/mock"
 	"jf.go.techchallenge/internal/apperror"
 	"jf.go.techchallenge/internal/applog"
 	"jf.go.techchallenge/internal/models"
+	"jf.go.techchallenge/internal/repository"
 	jfmock "jf.go.techchallenge/internal/repository/mock"
 	"jf.go.techchallenge/internal/services"
 )
@@ -209,6 +211,61 @@ func Test_Create(t *testing.T) {
 				t.Errorf("Returned course was not as expected. want: %v got: %v", tc.expectedCourse, outCourse)
 			}
 
+		})
+	}
+}
+
+var getAllTestCase = []struct {
+	name            string
+	urlParams       url.Values
+	expectedCourses []models.Course
+	expectedFilters repository.Filters
+	expectedErr     error
+	onRepoErr       error
+}{
+	{
+		name:            "Success",
+		urlParams:       url.Values{"Name": []string{"foo"}},
+		expectedCourses: []models.Course{testCourse, testCourse},
+		expectedFilters: repository.Filters{"name": "foo"},
+		expectedErr:     nil,
+		onRepoErr:       nil,
+	},
+	{
+		name:            "Success No filters",
+		urlParams:       nil,
+		expectedCourses: []models.Course{testCourse, testCourse, testCourse},
+		expectedFilters: repository.Filters{},
+		expectedErr:     nil,
+		onRepoErr:       nil,
+	},
+	{
+		name:            "Invalid Filter",
+		urlParams:       url.Values{"Foo": []string{"foo"}},
+		expectedFilters: repository.Filters{},
+		expectedCourses: nil,
+		expectedErr:     apperror.BadRequest("Invalid Request Parameter: Foo"),
+		onRepoErr:       nil,
+	},
+}
+
+func Test_GetAll(t *testing.T) {
+	for _, tc := range getAllTestCase {
+		t.Run(tc.name, func(t *testing.T) {
+			mockCourseRepo := new(jfmock.Course)
+			mockCourseRepo.On("FindAll", tc.expectedFilters).Return(tc.expectedCourses, tc.onRepoErr)
+
+			courseService := services.NewCourse(&applog.AppLogger{}, mockCourseRepo)
+
+			courses, outErr := courseService.GetAll(tc.urlParams)
+
+			if fmt.Sprint(outErr) != fmt.Sprint(tc.expectedErr) {
+				t.Errorf("Returned error was not as expected. want: %v got: %v, return: %v", tc.expectedErr, outErr, tc.onRepoErr)
+			}
+
+			if len(courses) != len(tc.expectedCourses) {
+				t.Errorf("Expected number of courses were not returned wanted %d got %d", len(tc.expectedCourses), len(courses))
+			}
 		})
 	}
 }
