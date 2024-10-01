@@ -18,7 +18,7 @@ func GetAllPersons(service *services.Person, logger *applog.AppLogger) Route {
 func CreatePerson(service *services.Person, logger *applog.AppLogger) Route {
 	return NewRoute("POST /api/person", func(w http.ResponseWriter, r *http.Request) {
 
-		input, err := decodeBody[models.UpdatePerson](r)
+		input, err := decodeBody[models.PersonInput](r)
 
 		if err != nil {
 			encodeError(w, err)
@@ -39,7 +39,7 @@ func GetOnePerson(service *services.Person, logger *applog.AppLogger) Route {
 
 func UpdateOnePerson(service *services.Person, logger *applog.AppLogger) Route {
 	return NewRoute("PUT /api/person/{guid}", func(w http.ResponseWriter, r *http.Request) {
-		input, err := decodeBody[models.UpdatePerson](r)
+		input, err := decodeBody[models.PersonInput](r)
 
 		if err != nil {
 			encodeError(w, err)

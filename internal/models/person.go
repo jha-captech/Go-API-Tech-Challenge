@@ -22,10 +22,11 @@ func (Person) TableName() string {
 	return "person"
 }
 
-type UpdatePerson struct {
-	FirstName string
-	LastName  string
-	Email     string
-	Age       uint
-	Type      PersonType
+type PersonInput struct {
+	FirstName   string
+	LastName    string
+	Email       string
+	Age         uint
+	Type        string
+	CourseGuids []string
 }

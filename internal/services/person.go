@@ -3,7 +3,6 @@ package services
 import (
 	"net/mail"
 	"net/url"
-	"slices"
 	"strings"
 
 	"github.com/google/uuid"
@@ -14,19 +13,21 @@ import (
 )
 
 type Person struct {
-	logger     *applog.AppLogger
-	repository repository.Person
+	logger           *applog.AppLogger
+	repository       repository.Person
+	courseRepository repository.Course
 }
 
-func NewPerson(logger *applog.AppLogger, repository repository.Person) *Person {
+func NewPerson(logger *applog.AppLogger, repository repository.Person, courseRepository repository.Course) *Person {
 	return &Person{
-		logger:     logger,
-		repository: repository,
+		logger:           logger,
+		repository:       repository,
+		courseRepository: courseRepository,
 	}
 }
 
 // Parse dont validate https://lexi-lambda.github.io/blog/2019/11/05/parse-don-t-validate/
-func (s Person) parse(input models.UpdatePerson, person *models.Person) error {
+func (s Person) parse(input models.PersonInput, person *models.Person) []error {
 	var errors []error
 
 	if strings.Trim(input.FirstName, " ") == "" {
@@ -51,12 +52,13 @@ func (s Person) parse(input models.UpdatePerson, person *models.Person) error {
 		errors = append(errors, apperror.BadRequest("Must be at least 10 years old to enrol."))
 	}
 
-	if slices.Contains([]models.PersonType{models.Professor, models.Strudent}, input.Type) {
-		errors = append(errors, apperror.BadRequest("Invalid Person type, must be either 'professor' or 'student'"))
-	}
+	// TODO!!!
+	// if slices.Contains([]models.PersonType{models.Professor, models.Strudent}, input.Type) {
+	// 	errors = append(errors, apperror.BadRequest("Invalid Person type, must be either 'professor' or 'student'"))
+	// }
 
 	if len(errors) > 0 {
-		return apperror.Of(errors...)
+		return errors
 	}
 
 	person.FirstName = input.FirstName
@@ -68,23 +70,41 @@ func (s Person) parse(input models.UpdatePerson, person *models.Person) error {
 	return nil
 }
 
+// Validates all CourseGuids are valid and exist.
+func (s Person) parseCourses(input models.PersonInput) ([]models.Course, []error) {
+	// Check course guids for validity. whether they should be added or removed is left up to the repository.
+	var courses []models.Course
+	var errors []error
+	for _, courseGuid := range input.CourseGuids {
+		course, err := s.courseRepository.FindOne(courseGuid)
+		if err != nil {
+			errors = append(errors, err)
+		} else {
+			courses = append(courses, course)
+		}
+	}
+	return courses, errors
+}
+
 func (s Person) GetOneByGuid(guid string) (models.Person, error) {
 	return s.repository.FindOne(guid)
 }
 
-func (s Person) Update(guid string, input models.UpdatePerson) (models.Person, error) {
+func (s Person) Update(guid string, input models.PersonInput) (models.Person, error) {
 	person, err := s.GetOneByGuid(guid)
 	if err != nil {
 		return person, err
 	}
 
-	err = s.parse(input, &person)
+	errs := s.parse(input, &person)
 
-	if err != nil {
-		return person, err
+	courses, courseErrs := s.parseCourses(input)
+
+	if errs != nil || courseErrs != nil {
+		return person, apperror.Of(append(errs, courseErrs...)...)
 	}
 
-	err = s.repository.Save(&person)
+	err = s.repository.Save(&person, courses)
 	return person, err
 }
 
@@ -98,16 +118,19 @@ func (s Person) Delete(guid string) error {
 	return err
 }
 
-func (s Person) Create(input models.UpdatePerson) (models.Person, error) {
+func (s Person) Create(input models.PersonInput) (models.Person, error) {
 	newPerson := models.Person{}
 
-	err := s.parse(input, &newPerson)
+	errs := s.parse(input, &newPerson)
 
-	if err != nil {
-		return newPerson, err
+	courses, courseErrs := s.parseCourses(input)
+
+	if errs != nil || courseErrs != nil {
+		return newPerson, apperror.Of(append(errs, courseErrs...)...)
 	}
+
 	newPerson.Guid = uuid.NewString()
-	err = s.repository.Save(&newPerson)
+	err := s.repository.Save(&newPerson, courses)
 	return newPerson, err
 }
 
