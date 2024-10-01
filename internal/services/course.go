@@ -32,22 +32,6 @@ func (s Course) GetOneByGuid(guid string) (models.Course, error) {
 	return course, err
 }
 
-func (s Course) parse(input models.CourseInput, course *models.Course) error {
-	var errors []error
-
-	if strings.Trim(input.Name, " ") == "" {
-		errors = append(errors, apperror.BadRequest("Name must not be blank"))
-	}
-
-	if len(errors) > 0 {
-		return apperror.Of(errors)
-	}
-
-	course.Name = input.Name
-
-	return nil
-}
-
 func (s Course) Update(guid string, input models.CourseInput) (models.Course, error) {
 	course, err := s.GetOneByGuid(guid)
 	if err != nil {
@@ -98,4 +82,20 @@ func (s Course) GetAll(urlParams url.Values) ([]models.Course, error) {
 	}
 
 	return s.repository.FindAll(filters)
+}
+
+func (s Course) parse(input models.CourseInput, course *models.Course) error {
+	var errors []error
+
+	if strings.Trim(input.Name, " ") == "" {
+		errors = append(errors, apperror.BadRequest("Name must not be blank"))
+	}
+
+	if len(errors) > 0 {
+		return apperror.Of(errors)
+	}
+
+	course.Name = input.Name
+
+	return nil
 }

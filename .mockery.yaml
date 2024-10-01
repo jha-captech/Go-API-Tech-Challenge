@@ -5,7 +5,7 @@ with-expecter: True
 mockname: "{{.InterfaceName}}"
 filename: "{{.MockName}}.go"
 dir: "{{.InterfaceDir}}/mock"
-outpkg: mock
+outpkg: jfmock
 packages:
   jf.go.techchallenge/internal/repository:
     interfaces:
