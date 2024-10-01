@@ -60,7 +60,7 @@ func ConvertStatusError(err error) StatusError {
 	return statusError
 }
 
-func Of(e ...error) error {
+func Of(e []error) error {
 
 	if len(e) == 0 {
 		return nil

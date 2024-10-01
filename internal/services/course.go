@@ -40,7 +40,7 @@ func (s Course) parse(input models.CourseInput, course *models.Course) error {
 	}
 
 	if len(errors) > 0 {
-		return apperror.Of(errors...)
+		return apperror.Of(errors)
 	}
 
 	course.Name = input.Name

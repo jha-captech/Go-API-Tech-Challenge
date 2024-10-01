@@ -58,7 +58,7 @@ func (s PersonRepositoryImpl) FindOne(guid string) (models.Person, error) {
 }
 
 // Used for both update and insert.
-// In order for courses to be processed correctly, the persons courses must be "hydrated"
+// In order for courses to be processed correctly, the persons courses must be "hydrated" on the person input parameter.
 func (s PersonRepositoryImpl) Save(person *models.Person, inputCourses []models.Course) error {
 
 	// var coursesToSave []models.PersonCourse
@@ -81,33 +81,6 @@ func (s PersonRepositoryImpl) Save(person *models.Person, inputCourses []models.
 		}
 	}
 
-	// // // Iterate both collections so all courses are represented.
-	// for _, course := range append(person.Courses, inputCourses...) {
-	// 	courseMap[course.ID] = false
-	// }
-
-	// // Update courses to be saved from input course.
-	// for _, inputCourse := range inputCourses {
-	// 	_, present := courseMap[inputCourse.ID]
-	// 	if present {
-	// 		courseMap[inputCourse.ID] = true
-	// 		coursesToSave = append(coursesToSave, models.PersonCourse{
-	// 			PersonID: person.ID,
-	// 			CourseID: inputCourse.ID,
-	// 		})
-	// 	}
-	// }
-
-	// // Courses to delete
-	// for key, value := range courseMap {
-	// 	if !value {
-	// 		coursesToDelete = append(coursesToDelete, models.PersonCourse{
-	// 			PersonID: person.ID,
-	// 			CourseID: key,
-	// 		})
-	// 	}
-	// }
-
 	person.Courses = inputCourses
 
 	return logDBErr(s.logger, s.db.Transaction(func(tx *gorm.DB) error {
@@ -120,14 +93,6 @@ func (s PersonRepositoryImpl) Save(person *models.Person, inputCourses []models.
 		if coursesError != nil {
 			return coursesError
 		}
-
-		// if len(coursesToSave) > 0 {
-		// 	coursesError = tx.Save(&coursesToSave).Error
-		// }
-
-		// if coursesError != nil {
-		// 	return coursesError
-		// }
 
 		return tx.Save(person).Error
 	}), "Failed to Save Person!")

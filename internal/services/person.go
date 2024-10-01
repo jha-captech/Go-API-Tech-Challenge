@@ -101,7 +101,7 @@ func (s Person) Update(guid string, input models.PersonInput) (models.Person, er
 	courses, courseErrs := s.parseCourses(input)
 
 	if errs != nil || courseErrs != nil {
-		return person, apperror.Of(append(errs, courseErrs...)...)
+		return person, apperror.Of(append(errs, courseErrs...))
 	}
 
 	err = s.repository.Save(&person, courses)
@@ -126,7 +126,7 @@ func (s Person) Create(input models.PersonInput) (models.Person, error) {
 	courses, courseErrs := s.parseCourses(input)
 
 	if errs != nil || courseErrs != nil {
-		return newPerson, apperror.Of(append(errs, courseErrs...)...)
+		return newPerson, apperror.Of(append(errs, courseErrs...))
 	}
 
 	newPerson.Guid = uuid.NewString()

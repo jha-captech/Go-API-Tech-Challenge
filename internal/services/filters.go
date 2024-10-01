@@ -32,14 +32,17 @@ func MakeFilterColumns(filters ValidFilters) FilterColumns {
 	return returnMap
 }
 
-func ParseURLFilters(urlParam url.Values, columnFilters FilterColumns) (repository.Filters, error) {
+// Validates the url.Values against the FilterColumns
+// Returns the converted Filters used by repositories for searching.
+// Error if any url value is provided that does not match any of the FilterColumns
+func ParseURLFilters(urlParam url.Values, fc FilterColumns) (repository.Filters, error) {
 
 	returnKeys := make(repository.Filters)
 
 	errors := []error{}
 
 	for urlKey, urlParamValue := range urlParam {
-		columnName, present := columnFilters[urlKey]
+		columnName, present := fc[urlKey]
 
 		if !present {
 			errors = append(errors, apperror.BadRequest("Invalid Request Parameter: %s", urlKey))
@@ -51,7 +54,7 @@ func ParseURLFilters(urlParam url.Values, columnFilters FilterColumns) (reposito
 	}
 
 	if len(errors) != 0 {
-		return nil, apperror.Of(errors...)
+		return nil, apperror.Of(errors)
 	}
 
 	return returnKeys, nil
