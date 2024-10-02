@@ -200,7 +200,7 @@ func TestCourseDelete(t *testing.T) {
 		DriverName: "postgres",
 	})
 
-	newCourse := models.Course{
+	testCourse := models.Course{
 		ID:   100,
 		Guid: "abcd",
 		Name: "Test Name",
@@ -208,13 +208,13 @@ func TestCourseDelete(t *testing.T) {
 
 	mock.ExpectBegin()
 	mock.ExpectQuery(regexp.QuoteMeta(`DELETE FROM "person_course" WHERE course_id = $1`)).
-		WithArgs(newCourse.ID)
+		WithArgs(testCourse.ID)
 	mock.ExpectCommit()
 	mock.ExpectClose()
 
 	mock.ExpectBegin()
 	mock.ExpectQuery(regexp.QuoteMeta(`DELETE FROM "course" WHERE "course"."id" = $1$`)).
-		WithArgs(newCourse.ID)
+		WithArgs(testCourse.ID)
 	mock.ExpectCommit()
 	mock.ExpectClose()
 
@@ -224,10 +224,10 @@ func TestCourseDelete(t *testing.T) {
 
 	repo := repository.NewCourse(db, appLog)
 
-	repo.Delete(&newCourse)
+	repo.Delete(&testCourse)
 
-	if newCourse.Guid != "abcd" ||
-		newCourse.Name != "Test Name" {
-		t.Errorf("Course was not as expected was %v", newCourse)
+	if testCourse.Guid != "abcd" ||
+		testCourse.Name != "Test Name" {
+		t.Errorf("Course was not as expected was %v", testCourse)
 	}
 }
