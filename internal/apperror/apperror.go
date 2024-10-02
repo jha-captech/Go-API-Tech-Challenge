@@ -67,7 +67,7 @@ func Of(e []error) error {
 	}
 
 	if len(e) == 1 {
-		return e[0]
+		return ConvertStatusError(e[0])
 	}
 
 	worstError := http.StatusBadRequest
