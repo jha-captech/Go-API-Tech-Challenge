@@ -149,13 +149,15 @@ func TestCourseSaveCreate(t *testing.T) {
 
 	repo := repository.NewCourse(db, appLog)
 
-	repo.Save(&newCourse)
+	err := repo.Save(&newCourse)
 
 	if newCourse.Guid != "abcd" ||
 		newCourse.Name != "Test Name" {
 		t.Errorf("Course was not as expected was %v", newCourse)
 	}
-
+	if err != nil {
+		t.Errorf("Error was returned when not expected %v", err)
+	}
 }
 
 func TestCourseSaveUpdate(t *testing.T) {
@@ -172,10 +174,9 @@ func TestCourseSaveUpdate(t *testing.T) {
 	}
 
 	mock.ExpectBegin()
-	mock.ExpectQuery(regexp.QuoteMeta(`UPDATE "course" SET "guid"=$1,"name"=$2 WHERE "id" = $3`)).
-		WithArgs(newCourse.Guid, newCourse.Name, newCourse.ID).
-		WillReturnRows(sqlmock.NewRows([]string{"Id", "guid", "name"}).
-			AddRow(100, newCourse.Guid, newCourse.Name))
+	mock.ExpectExec(regexp.QuoteMeta(`UPDATE "course" SET "guid"=$1,"name"=$2 WHERE "id" = $3`)).
+		WithArgs(newCourse.Guid, newCourse.Name, newCourse.ID).WillReturnResult(sqlmock.NewResult(1, 1))
+
 	mock.ExpectCommit()
 	mock.ExpectClose()
 
@@ -185,11 +186,14 @@ func TestCourseSaveUpdate(t *testing.T) {
 
 	repo := repository.NewCourse(db, appLog)
 
-	repo.Save(&newCourse)
+	err := repo.Save(&newCourse)
 
 	if newCourse.Guid != "abcd" ||
 		newCourse.Name != "Test Name" {
 		t.Errorf("Course was not as expected was %v", newCourse)
+	}
+	if err != nil {
+		t.Errorf("Error was returned when not expected %v", err)
 	}
 }
 
@@ -207,14 +211,13 @@ func TestCourseDelete(t *testing.T) {
 	}
 
 	mock.ExpectBegin()
-	mock.ExpectQuery(regexp.QuoteMeta(`DELETE FROM "person_course" WHERE course_id = $1`)).
-		WithArgs(testCourse.ID)
-	mock.ExpectCommit()
-	mock.ExpectClose()
+	mock.ExpectExec(regexp.QuoteMeta(`DELETE FROM "person_course" WHERE course_id = $1`)).
+		WithArgs(testCourse.ID).
+		WillReturnResult(sqlmock.NewResult(1, 1))
 
-	mock.ExpectBegin()
-	mock.ExpectQuery(regexp.QuoteMeta(`DELETE FROM "course" WHERE "course"."id" = $1$`)).
-		WithArgs(testCourse.ID)
+	mock.ExpectExec(regexp.QuoteMeta(`DELETE FROM "course" WHERE "course"."id" = $1`)).
+		WithArgs(testCourse.ID).
+		WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
 	mock.ExpectClose()
 
@@ -224,10 +227,14 @@ func TestCourseDelete(t *testing.T) {
 
 	repo := repository.NewCourse(db, appLog)
 
-	repo.Delete(&testCourse)
+	err := repo.Delete(&testCourse)
 
 	if testCourse.Guid != "abcd" ||
 		testCourse.Name != "Test Name" {
 		t.Errorf("Course was not as expected was %v", testCourse)
+	}
+
+	if err != nil {
+		t.Errorf("Error was returned when not expected %v", err)
 	}
 }
