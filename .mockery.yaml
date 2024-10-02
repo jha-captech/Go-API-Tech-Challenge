@@ -10,3 +10,4 @@ packages:
   jf.go.techchallenge/internal/repository:
     interfaces:
       Course:
+      Person:

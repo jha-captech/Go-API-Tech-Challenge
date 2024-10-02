@@ -4,7 +4,7 @@ type PersonType string
 
 const (
 	Professor PersonType = "professor"
-	Strudent  PersonType = "student"
+	Student   PersonType = "student"
 )
 
 type Person struct {

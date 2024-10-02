@@ -38,10 +38,6 @@ func (s Person) parse(input models.PersonInput, person *models.Person) []error {
 		errors = append(errors, apperror.BadRequest("Last Name must not be blank"))
 	}
 
-	if strings.Trim(input.FirstName, " ") == "" {
-		errors = append(errors, apperror.BadRequest("First Name must not be blank"))
-	}
-
 	// Validate email address format
 	_, emailErr := mail.ParseAddress(input.Email)
 	if emailErr != nil {

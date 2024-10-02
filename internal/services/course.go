@@ -24,12 +24,7 @@ func NewCourse(logger *applog.AppLogger, repository repository.Course) *Course {
 }
 
 func (s Course) GetOneByGuid(guid string) (models.Course, error) {
-	course, err := s.repository.FindOne(guid)
-
-	if err != nil {
-		return course, apperror.NotFound("Course: %s Not Found", guid)
-	}
-	return course, err
+	return s.repository.FindOne(guid)
 }
 
 func (s Course) Update(guid string, input models.CourseInput) (models.Course, error) {

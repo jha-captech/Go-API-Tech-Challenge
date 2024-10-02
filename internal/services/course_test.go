@@ -27,14 +27,14 @@ var getOneByGuidTestCase = []struct {
 	expectedErr    error
 }{
 	{name: "Sucess Case", guid: "123", expectedCourse: testCourse, expectedErr: nil},
-	{name: "Course Not Found Case", guid: "abcd", expectedCourse: models.Course{}, expectedErr: apperror.NotFound("Course: abcd Not Found")},
+	{name: "Course Not Found", guid: "abcd", expectedCourse: models.Course{}, expectedErr: apperror.NotFound("Course: abcd Not Found")},
 }
 
-func Test_GetOneByGuid(t *testing.T) {
+func Test_Course_GetOneByGuid(t *testing.T) {
 	mockCourseRepo := new(jfmock.Course)
 
 	mockCourseRepo.On("FindOne", "123").Return(testCourse, nil)
-	mockCourseRepo.On("FindOne", "abcd").Return(models.Course{}, fmt.Errorf("Not Found"))
+	mockCourseRepo.On("FindOne", "abcd").Return(models.Course{}, apperror.NotFound("Course: abcd Not Found"))
 
 	courseService := services.NewCourse(&applog.AppLogger{}, mockCourseRepo)
 
@@ -63,7 +63,7 @@ var updateTestCase = []struct {
 	onRepoUpdate   error
 }{
 	{
-		name:  "Success Case",
+		name:  "Success",
 		guid:  "123",
 		input: models.CourseInput{Name: "Test Update"},
 		expectedCourse: models.Course{
@@ -73,6 +73,14 @@ var updateTestCase = []struct {
 		},
 		expectedErr:  nil,
 		onRepoUpdate: nil,
+	},
+	{
+		name:           "Not Found",
+		guid:           "abcd",
+		input:          models.CourseInput{Name: "Test Update"},
+		expectedCourse: models.Course{},
+		expectedErr:    apperror.NotFound("Course: abcd Not Found"),
+		onRepoUpdate:   nil,
 	},
 	{
 		name:           "Name Blank",
@@ -101,7 +109,7 @@ func Test_Update(t *testing.T) {
 	mockCourseRepo := new(jfmock.Course)
 
 	mockCourseRepo.On("FindOne", "123").Return(testCourse, nil)
-	mockCourseRepo.On("FindOne", "abcd").Return(models.Course{}, fmt.Errorf("Not Found"))
+	mockCourseRepo.On("FindOne", "abcd").Return(models.Course{}, apperror.NotFound("Course: abcd Not Found"))
 
 	courseService := services.NewCourse(&applog.AppLogger{}, mockCourseRepo)
 
@@ -141,7 +149,7 @@ func Test_Delete(t *testing.T) {
 			mockCourseRepo := new(jfmock.Course)
 
 			mockCourseRepo.On("FindOne", "123").Return(testCourse, nil)
-			mockCourseRepo.On("FindOne", "abcd").Return(models.Course{}, fmt.Errorf("Not Found"))
+			mockCourseRepo.On("FindOne", "abcd").Return(models.Course{}, apperror.NotFound("Course: abcd Not Found"))
 
 			courseService := services.NewCourse(&applog.AppLogger{}, mockCourseRepo)
 
