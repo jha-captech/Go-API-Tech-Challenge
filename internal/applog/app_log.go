@@ -39,8 +39,8 @@ func (l AppLogger) Debug(msg string, params ...any) {
 	l.log.Println(BgGreen+White+"DEBUG:"+Reset+" "+msg, params)
 }
 
-func (l AppLogger) Info(msg string) {
-	l.log.Println(BgBlue + White + "INFO:" + Reset + " " + msg)
+func (l AppLogger) Info(msg string, params ...any) {
+	l.log.Println(BgBlue+White+"INFO:"+Reset+" "+msg, params)
 }
 
 func (l AppLogger) Error(msg string, err error) {
