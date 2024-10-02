@@ -41,7 +41,7 @@ func (s CourseRepositoryImpl) FindAll(filters Filters) ([]models.Course, error) 
 	}
 
 	result := tx.Find(&courses)
-	return courses, logDBErr(s.logger, result.Error, "Failed to query courses table")
+	return courses, LogDBErr(s.logger, result.Error, "Failed to query courses table")
 }
 
 func (s CourseRepositoryImpl) FindOne(guid string) (models.Course, error) {
@@ -53,11 +53,11 @@ func (s CourseRepositoryImpl) FindOne(guid string) (models.Course, error) {
 		return course, apperror.NotFound("Course: %s Not Found", guid)
 	}
 
-	return course, logDBErr(s.logger, result.Error, "Failed to Query Course Table")
+	return course, LogDBErr(s.logger, result.Error, "Failed to Query Course Table")
 }
 
 func (s CourseRepositoryImpl) Save(course *models.Course) error {
-	return logDBErr(s.logger, s.db.Save(course).Error, "Failed to Save Course")
+	return LogDBErr(s.logger, s.db.Save(course).Error, "Failed to Save Course")
 }
 
 func (s CourseRepositoryImpl) Delete(course *models.Course) error {
@@ -65,10 +65,10 @@ func (s CourseRepositoryImpl) Delete(course *models.Course) error {
 	return s.db.Transaction(func(tx *gorm.DB) error {
 		result := tx.Delete(&models.PersonCourse{}, "course_id = ?", course.ID)
 
-		if err := logDBErr(s.logger, result.Error, "Failed to delete person_course for course record"); err != nil {
+		if err := LogDBErr(s.logger, result.Error, "Failed to delete person_course for course record"); err != nil {
 			return err
 		}
 
-		return logDBErr(s.logger, tx.Delete(course).Error, "Failed to delete course record")
+		return LogDBErr(s.logger, tx.Delete(course).Error, "Failed to delete course record")
 	})
 }

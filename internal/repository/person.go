@@ -42,7 +42,7 @@ func (s PersonRepositoryImpl) FindAll(filters Filters) ([]models.Person, error) 
 	}
 
 	result := tx.Find(&persons)
-	return persons, logDBErr(s.logger, result.Error, "Failed to Query Person Table")
+	return persons, LogDBErr(s.logger, result.Error, "Failed to Query Person Table")
 }
 
 func (s PersonRepositoryImpl) FindOne(guid string) (models.Person, error) {
@@ -54,7 +54,7 @@ func (s PersonRepositoryImpl) FindOne(guid string) (models.Person, error) {
 		return person, apperror.NotFound("Person: %s Not Found", guid)
 	}
 
-	return person, logDBErr(s.logger, result.Error, "Failed to Query Person Table")
+	return person, LogDBErr(s.logger, result.Error, "Failed to Query Person Table")
 }
 
 // Used for both update and insert.
@@ -83,7 +83,7 @@ func (s PersonRepositoryImpl) Save(person *models.Person, inputCourses []models.
 
 	person.Courses = inputCourses
 
-	return logDBErr(s.logger, s.db.Transaction(func(tx *gorm.DB) error {
+	return LogDBErr(s.logger, s.db.Transaction(func(tx *gorm.DB) error {
 
 		var coursesError error
 		if len(coursesToDelete) > 0 {
@@ -101,10 +101,10 @@ func (s PersonRepositoryImpl) Save(person *models.Person, inputCourses []models.
 func (s PersonRepositoryImpl) Delete(person *models.Person) error {
 
 	// Handle deleting the courses the person is enrolled in as well as the person.
-	return logDBErr(s.logger, s.db.Transaction(func(tx *gorm.DB) error {
+	return LogDBErr(s.logger, s.db.Transaction(func(tx *gorm.DB) error {
 
 		result := tx.Delete(&models.PersonCourse{}, "person_id = ?", person.ID)
-		if err := logDBErr(s.logger, result.Error, "Failed to delete person_course record"); err != nil {
+		if err := LogDBErr(s.logger, result.Error, "Failed to delete person_course record"); err != nil {
 			return err
 		}
 
