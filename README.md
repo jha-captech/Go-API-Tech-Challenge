@@ -4,9 +4,17 @@
 
 ## Table of Contents
 
-- [Table of Contents](#table-of-contents)
-- [Tech Challenge Assignment](#tech-challenge-assignment)
-- [Project Requirements Checklist](#project-requirements-checklist)
+- [Go API Tech Challenge: Assignment](#go-api-tech-challenge-assignment)
+  - [Table of Contents](#table-of-contents)
+    - [Setting up a database instance](#setting-up-a-database-instance)
+  - [Tech Challenge Assignment](#tech-challenge-assignment)
+    - [Summary](#summary)
+    - [Web Framework](#web-framework)
+    - [Data](#data)
+    - [Project Structure](#project-structure)
+    - [`api/course`](#apicourse)
+    - [`api/person`](#apiperson)
+  - [Project Requirements Checklist](#project-requirements-checklist)
 
 ### Setting up a database instance
 

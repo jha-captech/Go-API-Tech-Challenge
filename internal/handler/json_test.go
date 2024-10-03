@@ -9,34 +9,8 @@ import (
 	"github.com/stretchr/testify/mock"
 	"jf.go.techchallenge/internal/apperror"
 	"jf.go.techchallenge/internal/applog"
+	"jf.go.techchallenge/internal/handler"
 )
-
-// type MockHttpResponseWriter struct {
-// 	expectStatus     int
-// 	wasWriteCalled   bool
-// 	statusCalledWith int
-// 	shouldWriteError error
-// }
-
-// func (s MockHttpResponseWriter) Header() http.Header {
-// 	return http.Header{}
-// }
-
-// func (s MockHttpResponseWriter) Write([]byte) (int, error) {
-// 	s.wasWriteCalled = true
-// 	if s.shouldWriteError != nil {
-// 		return -1, s.shouldWriteError
-// 	}
-// 	return 1, nil
-// }
-
-// func (s MockHttpResponseWriter) WriteHeader(statusCode int) {
-// 	s.statusCalledWith = statusCode
-// }
-
-// func (s MockHttpResponseWriter) GetStatusCalled() int {
-// 	return s.statusCalledWith
-// }
 
 type MockHttpWriter struct {
 	mock.Mock
@@ -132,33 +106,3 @@ func TestEncodeResponse(t *testing.T) {
 		})
 	}
 }
-
-// func TestEncodeResponseExpectingResponseEncoded(t *testing.T) {
-// 	mockHttpWriter := new(MockHttpWriter)
-
-// 	applog := applog.AppLogger{}
-
-// 	mockHttpWriter.On("Header").Return(http.Header{})
-
-// 	mockHttpWriter.On("Write", mock.Anything).Return(1, nil)
-
-// 	encodeResponse(mockHttpWriter, &applog, "Hello!", nil)
-
-// 	mockHttpWriter.AssertExpectations(t)
-// }
-
-// func TestEncodeResponseWithError(t *testing.T) {
-// 	mockHttpWriter := new(MockHttpWriter)
-
-// 	applog := applog.New(log.Default())
-
-// 	mockHttpWriter.On("Header").Return(http.Header{})
-
-// 	mockHttpWriter.On("Write", mock.Anything).Return(1, nil)
-
-// 	mockHttpWriter.On("WriteHeader", 400)
-
-// 	encodeResponse(mockHttpWriter, applog, "Hello!", apperror.BadRequest("No Bueno"))
-
-// 	mockHttpWriter.AssertExpectations(t)
-// }

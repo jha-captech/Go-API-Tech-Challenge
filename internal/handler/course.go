@@ -3,6 +3,7 @@ package handler
 import (
 	"net/http"
 
+	"jf.go.techchallenge/internal/apperror"
 	"jf.go.techchallenge/internal/applog"
 	"jf.go.techchallenge/internal/models"
 	"jf.go.techchallenge/internal/services"
@@ -20,7 +21,8 @@ func CreateCourse(service *services.Course, logger *applog.AppLogger) Route {
 		input, err := decodeBody[models.CourseInput](r)
 
 		if err != nil {
-			encodeError(w, err)
+			logger.Debug("Failed to Deserialize Request Body ", err)
+			encodeError(w, apperror.BadRequest("Invalid JSON"))
 			return
 		}
 		course, err := service.Create(*input)
@@ -41,7 +43,8 @@ func UpdateOneCourse(service *services.Course, logger *applog.AppLogger) Route {
 		input, err := decodeBody[models.CourseInput](r)
 
 		if err != nil {
-			encodeError(w, err)
+			logger.Debug("Failed to Deserialize Request Body ", err)
+			encodeError(w, apperror.BadRequest("Invalid JSON"))
 			return
 		}
 

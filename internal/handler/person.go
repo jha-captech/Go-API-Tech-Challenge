@@ -3,6 +3,7 @@ package handler
 import (
 	"net/http"
 
+	"jf.go.techchallenge/internal/apperror"
 	"jf.go.techchallenge/internal/applog"
 	"jf.go.techchallenge/internal/models"
 	"jf.go.techchallenge/internal/services"
@@ -21,7 +22,8 @@ func CreatePerson(service *services.Person, logger *applog.AppLogger) Route {
 		input, err := decodeBody[models.PersonInput](r)
 
 		if err != nil {
-			encodeError(w, err)
+			logger.Debug("Failed to Deserialize Request Body ", err)
+			encodeError(w, apperror.BadRequest("Invalid JSON"))
 			return
 		}
 
@@ -42,7 +44,8 @@ func UpdateOnePerson(service *services.Person, logger *applog.AppLogger) Route {
 		input, err := decodeBody[models.PersonInput](r)
 
 		if err != nil {
-			encodeError(w, err)
+			logger.Debug("Failed to Deserialize Request Body ", err)
+			encodeError(w, apperror.BadRequest("Invalid JSON"))
 			return
 		}
 
