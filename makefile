@@ -2,22 +2,22 @@
 
 .PHONY: db_up
 db_up:
-	docker-compose up postgres
+	podman compose up postgres
 
 .PHONY: db_up_d
 db_up_d:
-	docker-compose up postgres -d
+	podman compose up postgres -d
 
 .PHONY: db_down
 db_down:
-	docker-compose down postgres
+	podman compose down postgres
 
 # ── API ─────────────────────────────────────────────────────────────────────────
 
 .PHONY: run_app
 run_app:
-	docker-compose up
+	podman compose up
 
-.PHONY: build-image
-build-image:
+.PHONY: build_image
+build_image:
 	podman build -t jf-techchallenge .

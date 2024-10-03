@@ -50,6 +50,7 @@ func main() {
 			),
 		),
 		fx.Invoke(func(*http.Server) {}),
+		fx.Invoke(func(appLog *applog.AppLogger) { appLog.PrintBanner() }),
 	).Run()
 }
 
