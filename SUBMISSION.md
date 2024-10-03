@@ -524,8 +524,6 @@ Returns
 - 404 if guid is not found
 - 500 internal server error if any unexpected errors occurred
 
-Accepts: [PersonInput](#person-input)
-
 Responds with: String
 
 Example
