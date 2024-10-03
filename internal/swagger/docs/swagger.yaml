@@ -1,0 +1,355 @@
+definitions:
+  handlers.inputCourse:
+    properties:
+      name:
+        type: string
+    type: object
+  handlers.inputPerson:
+    properties:
+      age:
+        type: integer
+      courses:
+        items:
+          type: integer
+        type: array
+      first_name:
+        type: string
+      last_name:
+        type: string
+      type:
+        type: string
+    type: object
+  handlers.outputCourse:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  handlers.outputPerson:
+    properties:
+      age:
+        type: integer
+      courses:
+        items:
+          type: integer
+        type: array
+      first_name:
+        type: string
+      id:
+        type: integer
+      last_name:
+        type: string
+      type:
+        type: string
+    type: object
+  handlers.problem:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+    type: object
+  handlers.responseCourse:
+    properties:
+      course:
+        $ref: '#/definitions/handlers.outputCourse'
+    type: object
+  handlers.responseCourses:
+    properties:
+      courses:
+        items:
+          $ref: '#/definitions/handlers.outputCourse'
+        type: array
+    type: object
+  handlers.responseErr:
+    properties:
+      error:
+        type: string
+      validation_errors:
+        items:
+          $ref: '#/definitions/handlers.problem'
+        type: array
+    type: object
+  handlers.responseMsg:
+    properties:
+      message:
+        type: string
+    type: object
+  handlers.responsePerson:
+    properties:
+      person:
+        $ref: '#/definitions/handlers.outputPerson'
+    type: object
+  handlers.responsePersons:
+    properties:
+      persons:
+        items:
+          $ref: '#/definitions/handlers.outputPerson'
+        type: array
+    type: object
+info:
+  contact: {}
+paths:
+  /api/course:
+    get:
+      consumes:
+      - application/json
+      description: List all courses
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.responseCourses'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.responseErr'
+      summary: List all courses
+      tags:
+      - courses
+    post:
+      consumes:
+      - application/json
+      description: Creates new course
+      parameters:
+      - description: Course Object
+        in: body
+        name: course
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.inputCourse'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.responseCourse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.responseErr'
+      summary: Create Course
+      tags:
+      - courses
+  /api/course/{ID}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes course associated with given ID
+      parameters:
+      - description: ID of course to delete
+        in: path
+        name: ID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.responseMsg'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.responseErr'
+      summary: Deletes Course
+      tags:
+      - courses
+    get:
+      consumes:
+      - application/json
+      description: Gets course associated with given ID
+      parameters:
+      - description: ID of course to retrieve
+        in: path
+        name: ID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.responseCourse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.responseErr'
+      summary: Get Course
+      tags:
+      - courses
+    put:
+      consumes:
+      - application/json
+      description: Updates course associated with given ID
+      parameters:
+      - description: ID of course to update
+        in: path
+        name: ID
+        required: true
+        type: integer
+      - description: Course Object
+        in: body
+        name: course
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.inputCourse'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.responseCourse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.responseErr'
+      summary: Update Course
+      tags:
+      - courses
+  /api/person:
+    get:
+      consumes:
+      - application/json
+      description: List all persons
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.responsePersons'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.responseErr'
+      summary: List all Persons
+      tags:
+      - person
+    post:
+      consumes:
+      - application/json
+      description: Creates person
+      parameters:
+      - description: Person Object
+        in: body
+        name: person
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.inputPerson'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.responsePerson'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.responseErr'
+      summary: Creates Person
+      tags:
+      - person
+  /api/person/{name}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes person by name
+      parameters:
+      - description: last name of person to delete
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.responseMsg'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.responseErr'
+      summary: Deletes Person
+      tags:
+      - person
+    get:
+      consumes:
+      - application/json
+      description: Gets Person by Name
+      parameters:
+      - description: last name of person to retrieve
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.responsePerson'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.responseErr'
+      summary: Gets Person
+      tags:
+      - person
+    put:
+      consumes:
+      - application/json
+      description: Updates person
+      parameters:
+      - description: last name of person to update
+        in: path
+        name: name
+        required: true
+        type: string
+      - description: Person Object
+        in: body
+        name: person
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.inputPerson'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.responsePerson'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.responseErr'
+      summary: Update Person
+      tags:
+      - person
+  /health-check:
+    get:
+      consumes:
+      - application/json
+      description: Health check response
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.responseMsg'
+      summary: Health check response
+      tags:
+      - health-check
+swagger: "2.0"

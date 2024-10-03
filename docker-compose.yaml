@@ -1,4 +1,30 @@
 services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile  
+    ports:
+      - "8000:8000"           
+    environment:
+      - DATABASE_USER=${DATABASE_USER}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - DATABASE_NAME=${DATABASE_NAME}
+      - DATABASE_HOST=${DATABASE_HOST}
+      - DATABASE_PORT=${DATABASE_PORT}
+      - DATABASE_CONTAINER_NAME=${DATABASE_CONTAINER_NAME}
+      - DATABASE_RETRY_DURATION_SECONDS=${DATABASE_RETRY_DURATION_SECONDS}
+      - HTTP_PORT=${HTTP_PORT}
+      - HTTP_DOMAIN=${HTTP_DOMAIN}
+      - HTTP_SHUTDOWN_DURATION=${HTTP_SHUTDOWN_DURATION}
+      - SWAGGER_HTTP_DOMAIN=${SWAGGER_HTTP_DOMAIN}
+      - LOG_LEVEL=${LOG_LEVEL}
+      - ENV=${ENV}
+      - HTTP_USE_SWAGGER=${HTTP_USE_SWAGGER}
+
+    depends_on:
+      - postgres
+    networks:
+      - app
   postgres:
     image: postgres:alpine
     container_name: ${DATABASE_CONTAINER_NAME}
