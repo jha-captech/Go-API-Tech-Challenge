@@ -11,6 +11,10 @@ COPY internal /gotechchallenge/internal
 # Download dependencies.
 RUN go mod download
 
+# Run unit tests.
+RUN go test ./...
+
+
 RUN CGO_ENABLED=0 GOOS=linux go build /gotechchallenge/cmd/api/main.go 
 
 FROM alpine:3.19 AS publish
