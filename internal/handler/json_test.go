@@ -9,7 +9,6 @@ import (
 	"github.com/stretchr/testify/mock"
 	"jf.go.techchallenge/internal/apperror"
 	"jf.go.techchallenge/internal/applog"
-	"jf.go.techchallenge/internal/handler"
 )
 
 type MockHttpWriter struct {
