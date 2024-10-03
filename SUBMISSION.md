@@ -113,7 +113,57 @@ This project is composed of a few different packages with dedicated responsibili
 | Type         | string        | Must be either "student" or "professor" |
 | Course Guids | array[string] | array of strings of course guids for the user to be enrolled in |
 
+# Error Handling
 
+This project will handle providing all errors to the user if they make multiple mistakes in a request.
+For example if a user provides a single incorrect query parameter when querying `/api/person`
+I.E
+
+`/api/person?FirstNam=Foo`
+
+They will get the following 400 error.
+```json
+{"Message":"Invalid Request Parameter: FirstNa"}
+```
+If they provide > 1 incorrect query parameter
+I.E
+`/api/person?FirstNam=Foo&SomethingElse=Bar&anotherError=FooBar`
+
+The response will be a multi error response
+```json
+{
+    "Message": "Multiple Errors:",
+    "Errors": [
+        {
+            "Message": "Invalid Request Parameter: anotherError"
+        },
+        {
+            "Message": "Invalid Request Parameter: FirstNam"
+        },
+        {
+            "Message": "Invalid Request Parameter: SomethingElse"
+        }
+    ]
+}
+```
+
+The same error convention applies to data validation on *PUTS* and *POSTS*
+
+For example, Creating a person with a blank last name and incorrect email address will result in the following
+
+```json
+{
+    "Message": "Multiple Errors:",
+    "Errors": [
+        {
+            "Message": "Last Name must not be blank"
+        },
+        {
+            "Message": "Email must be a valid email address"
+        }
+    ]
+}
+```
 
 ## Course
 

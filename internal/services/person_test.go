@@ -252,7 +252,7 @@ var personUpdateTestCase = []struct {
 			CourseGuids: nil,
 		},
 		expectedPerson: testPerson,
-		expectedErr:    apperror.BadRequest("Email must be a valid email adress"),
+		expectedErr:    apperror.BadRequest("Email must be a valid email address"),
 	},
 	{
 		name: "Email Not Valid Blank",
@@ -266,7 +266,7 @@ var personUpdateTestCase = []struct {
 			CourseGuids: nil,
 		},
 		expectedPerson: testPerson,
-		expectedErr:    apperror.BadRequest("Email must be a valid email adress"),
+		expectedErr:    apperror.BadRequest("Email must be a valid email address"),
 	},
 
 	{
@@ -313,7 +313,7 @@ var personUpdateTestCase = []struct {
 		expectedErr: apperror.Of([]error{
 			apperror.BadRequest("First Name must not be blank"),
 			apperror.BadRequest("Last Name must not be blank"),
-			apperror.BadRequest("Email must be a valid email adress"),
+			apperror.BadRequest("Email must be a valid email address"),
 			apperror.BadRequest("Must be at least 10 years old to enrol."),
 			apperror.BadRequest("Invalid Person type, must be either 'professor' or 'student'"),
 		}),
@@ -547,7 +547,7 @@ var personCreateTestCase = []struct {
 		},
 		expectedPerson:  models.Person{},
 		expectedCourses: nil,
-		expectedErr:     apperror.BadRequest("Email must be a valid email adress"),
+		expectedErr:     apperror.BadRequest("Email must be a valid email address"),
 	},
 	{
 		name: "Age less than 10",
@@ -592,7 +592,7 @@ var personCreateTestCase = []struct {
 		expectedErr: apperror.Of([]error{
 			apperror.BadRequest("First Name must not be blank"),
 			apperror.BadRequest("Last Name must not be blank"),
-			apperror.BadRequest("Email must be a valid email adress"),
+			apperror.BadRequest("Email must be a valid email address"),
 			apperror.BadRequest("Must be at least 10 years old to enrol."),
 			apperror.BadRequest("Invalid Person type, must be either 'professor' or 'student'"),
 		}),

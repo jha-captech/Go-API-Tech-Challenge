@@ -42,7 +42,7 @@ func (s Person) parse(input models.PersonInput, person *models.Person) []error {
 	// Validate email address format
 	_, emailErr := mail.ParseAddress(input.Email)
 	if emailErr != nil {
-		errors = append(errors, apperror.BadRequest("Email must be a valid email adress"))
+		errors = append(errors, apperror.BadRequest("Email must be a valid email address"))
 	}
 
 	if input.Age < 10 {
