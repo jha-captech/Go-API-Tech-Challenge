@@ -8,7 +8,7 @@ see podman-makefile a second makefile updated with podman specific commands. I.E
 
 `make run` runs the application locally, but will still require a database instance to be running `make db_up`
 
-***NOTE:*** When running the database be sure to remove old instances of `courses-db-container` as the schema has been changed!
+> **Note:** When running the database be sure to remove old instances of `courses-db-container` as the schema has been changed!
 
 
 The app can also be run locally using go directly.
