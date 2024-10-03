@@ -39,13 +39,13 @@ The external libraries used by this project has been kept to a minimum.
 
 - Http Routing is done using the standard net/http library. 
 
-- FX a dependency injection library https://github.com/uber-go/fx is used to manage singletons and app dependencies
+- [FX](https://github.com/uber-go/fx) a dependency injection library is used to manage singletons and app dependencies
 
-- Gorm https://github.com/go-gorm/gorm is used as an ORM solution for database querying
+- [Gorm](https://github.com/go-gorm/gorm ) is used as an ORM solution for database querying
 
-- Google uuid for generating `guids`. https://github.com/google/uuid
+- [Google uuid](https://github.com/google/uuid) for generating `guids`. 
 
-- testify is also used for unit testing and creating mocks. https://github.com/stretchr/testify
+- [testify](https://github.com/stretchr/testify) is also used for unit testing and creating mocks. 
 
 - mockery was used to generate mocks. 
 
