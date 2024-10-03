@@ -2,24 +2,24 @@ package database
 
 import (
 	"fmt"
-	"log"
 	"time"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
+	"jf.go.techchallenge/internal/applog"
 	"jf.go.techchallenge/internal/config"
 )
 
 // Start Database
-func New(config *config.Configuration, goLog *log.Logger) (*gorm.DB, error) {
+func New(config *config.Configuration, appLogger *applog.AppLogger) (*gorm.DB, error) {
 
 	connectionString := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=5432 sslmode=disable",
 		config.Database.Host, config.Database.User, config.Database.Password, config.Database.Name)
 
 	// Gorm Logger
 	newLogger := logger.New(
-		goLog, // io writer
+		appLogger.GoLogger(), // io writer
 		logger.Config{
 			SlowThreshold:             time.Second, // Slow SQL threshold
 			LogLevel:                  logger.Info, // Log level
@@ -29,9 +29,18 @@ func New(config *config.Configuration, goLog *log.Logger) (*gorm.DB, error) {
 		},
 	)
 
-	// Connect to database.
-	return gorm.Open(postgres.Open(connectionString), &gorm.Config{
-		// Logger: newLogger, todo
-		Logger: newLogger,
-	})
+	for attempts := 0; attempts < 30; attempts++ {
+		db, err := gorm.Open(postgres.Open(connectionString), &gorm.Config{
+			Logger: newLogger,
+		})
+
+		if err == nil {
+			return db, nil
+		}
+
+		appLogger.Info("Attempt %d: Unable to connect to the database: %v", attempts+1, err)
+		time.Sleep(5 * time.Second)
+	}
+
+	return nil, fmt.Errorf("FATAL: Failed to Connect to Database! Tried 30 times and gave up!")
 }
