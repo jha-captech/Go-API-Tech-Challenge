@@ -39,7 +39,7 @@ func New(config *config.Configuration, appLogger *applog.AppLogger) (*gorm.DB, e
 		}
 
 		appLogger.Info("Attempt %d: Unable to connect to the database: %v", attempts+1, err)
-		time.Sleep(5 * time.Second)
+		time.Sleep(time.Duration(config.Database.RetrySeconds) * time.Second)
 	}
 
 	return nil, fmt.Errorf("FATAL: Failed to Connect to Database Tried 30 times and gave up")

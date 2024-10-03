@@ -3,23 +3,28 @@ package config
 import (
 	"fmt"
 	"os"
+	"strconv"
+
+	"jf.go.techchallenge/internal/applog"
 )
 
 type Database struct {
-	User     string
-	Password string
-	Name     string
-	Host     string
-	Port     string
+	User         string
+	Password     string
+	Name         string
+	Host         string
+	Port         string
+	RetrySeconds int
 }
 
 type Configuration struct {
 	Database Database
+	LogLevel string
 }
 
 // Creates and returns a new configuration based on environment variables passed to the executing program.
 // Will return an error if any required environment variables are not set.
-func New() (*Configuration, error) {
+func New(log *applog.AppLogger) (*Configuration, error) {
 	databaseName, databaseNameSet := os.LookupEnv("DATABASE_NAME")
 	if !databaseNameSet {
 		return nil, fmt.Errorf("database environment variable must be set")
@@ -45,13 +50,23 @@ func New() (*Configuration, error) {
 		return nil, fmt.Errorf("database port environment variable must be set")
 	}
 
+	retryString, retrySet := os.LookupEnv("DATABASE_RETRY_DURATION_SECONDS")
+	if !retrySet {
+		retryString = "5"
+	}
+	databaseRetry, err := strconv.Atoi(retryString)
+	if err != nil {
+		log.Fatal("DATABASE_RETRY_DURATION_SECONDS must be a number ", err)
+	}
+
 	config := &Configuration{
 		Database: Database{
-			User:     databaseUser,
-			Name:     databaseName,
-			Password: databasePassword,
-			Host:     databaseHost,
-			Port:     databasePort,
+			RetrySeconds: databaseRetry,
+			User:         databaseUser,
+			Name:         databaseName,
+			Password:     databasePassword,
+			Host:         databaseHost,
+			Port:         databasePort,
 		},
 	}
 
