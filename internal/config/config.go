@@ -54,12 +54,19 @@ func New(log *applog.AppLogger) (*Configuration, error) {
 	if !retrySet {
 		retryString = "5"
 	}
+
 	databaseRetry, err := strconv.Atoi(retryString)
 	if err != nil {
 		log.Fatal("DATABASE_RETRY_DURATION_SECONDS must be a number ", err)
 	}
 
+	logLevel, logLevelSet := os.LookupEnv("LOG_LEVEL")
+	if !logLevelSet {
+		logLevel = "DEBUG"
+	}
+
 	config := &Configuration{
+		LogLevel: logLevel,
 		Database: Database{
 			RetrySeconds: databaseRetry,
 			User:         databaseUser,
