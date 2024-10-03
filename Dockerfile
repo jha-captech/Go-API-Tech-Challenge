@@ -11,6 +11,9 @@ COPY internal /gotechchallenge/internal
 # Download dependencies.
 RUN go mod download
 
+# Fail if go mod tidy results in any changes.
+RUN go mod tidy -diff
+
 # Run unit tests.
 RUN go test ./...
 
@@ -21,6 +24,6 @@ FROM alpine:3.19 AS publish
 
 COPY --from=builder /gotechchallenge/main .
 
-EXPOSE 8080
+EXPOSE 8000
 
 ENTRYPOINT [ "./main" ]

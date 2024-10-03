@@ -2,9 +2,7 @@ package config
 
 import (
 	"fmt"
-	"log"
 	"os"
-	"strconv"
 )
 
 type Database struct {
@@ -16,7 +14,6 @@ type Database struct {
 }
 
 type Configuration struct {
-	HTTPPort int
 	Database Database
 }
 
@@ -48,18 +45,7 @@ func New() (*Configuration, error) {
 		return nil, fmt.Errorf("database port environment variable must be set")
 	}
 
-	httpPort, httpPortSet := os.LookupEnv("HTTP_PORT")
-	if !httpPortSet {
-		httpPort = "8080"
-	}
-
-	portInt, err := strconv.Atoi(httpPort)
-	if err != nil {
-		log.Fatalf("Port ust be a number, was %s", httpPort)
-	}
-
 	config := &Configuration{
-		HTTPPort: portInt,
 		Database: Database{
 			User:     databaseUser,
 			Name:     databaseName,

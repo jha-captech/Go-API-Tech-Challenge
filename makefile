@@ -22,3 +22,7 @@ run_app:
 
 build_image:
 	docker build -t jf-techchallenge .
+
+.PHONY: run
+run:
+	DATABASE_NAME=coursesDB DATABASE_USER=courses-db-user DATABASE_PASSWORD=courses-db-password DATABASE_HOST=localhost DATABASE_PORT=5432 go run cmd/api/main.go
