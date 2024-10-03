@@ -35,10 +35,10 @@ func encodeResponse(w http.ResponseWriter, logger *applog.AppLogger, data any, e
 }
 
 func encodeCreated(w http.ResponseWriter, logger *applog.AppLogger, data any, err error) {
-	encodeResponse(w, logger, data, err)
 	if err == nil {
 		w.WriteHeader(http.StatusCreated)
 	}
+	encodeResponse(w, logger, data, err)
 }
 
 func decodeBody[T any](r *http.Request) (*T, error) {
