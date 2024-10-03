@@ -69,8 +69,8 @@ func NewServeMux(routes []handler.Route) *http.ServeMux {
 }
 
 // Start Http Server.
-func NewHTTPServer(lc fx.Lifecycle, mux *http.ServeMux) *http.Server {
-	srv := &http.Server{Addr: ":8080", Handler: mux}
+func NewHTTPServer(config *config.Configuration, lc fx.Lifecycle, mux *http.ServeMux) *http.Server {
+	srv := &http.Server{Addr: fmt.Sprintf(":%d", config.HTTPPort), Handler: mux}
 	lc.Append(fx.Hook{
 		OnStart: func(ctx context.Context) error {
 			ln, err := net.Listen("tcp", srv.Addr)

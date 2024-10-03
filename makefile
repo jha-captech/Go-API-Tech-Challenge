@@ -14,6 +14,10 @@ db_down:
 
 # ── API ─────────────────────────────────────────────────────────────────────────
 
-.PHONY: run_app:
+.PHONY: run_app
 run_app:
 	docker-compose up
+
+.PHONY: build-image
+build-image:
+	podman build -t jf-techchallenge .

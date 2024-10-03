@@ -50,3 +50,7 @@ func (l AppLogger) Error(msg string, err error) {
 func (l AppLogger) Fatal(msg string, err error) {
 	l.log.Fatal(BgRed+White+"FATAL:"+Reset+" "+msg+" ", err)
 }
+
+func (l AppLogger) GoLogger() *log.Logger {
+	return l.log
+}

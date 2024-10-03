@@ -24,6 +24,16 @@ services:
       timeout: 5s
       retries: 5
 
+  jf-techchallenge:
+    image: jf-techchallenge
+    container_name: jf-techchallenge
+    restart: always
+    networks:
+      - app
+    env_file:
+      - .env
+    ports:
+      - "8080:8080"
 
 volumes:
   postgres-db:
