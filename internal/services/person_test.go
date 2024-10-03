@@ -298,6 +298,26 @@ var personUpdateTestCase = []struct {
 		expectedPerson: testPerson,
 		expectedErr:    apperror.BadRequest("Invalid Person type, must be either 'professor' or 'student'"),
 	},
+	{
+		name: "Multi Error",
+		guid: "1234",
+		input: models.PersonInput{
+			FirstName:   " ",
+			LastName:    " ",
+			Email:       " ",
+			Age:         1,
+			Type:        "Foo",
+			CourseGuids: nil,
+		},
+		expectedPerson: testPerson,
+		expectedErr: apperror.Of([]error{
+			apperror.BadRequest("First Name must not be blank"),
+			apperror.BadRequest("Last Name must not be blank"),
+			apperror.BadRequest("Email must be a valid email adress"),
+			apperror.BadRequest("Must be at least 10 years old to enrol."),
+			apperror.BadRequest("Invalid Person type, must be either 'professor' or 'student'"),
+		}),
+	},
 }
 
 func TestPersonUpdate(t *testing.T) {
@@ -556,6 +576,26 @@ var personCreateTestCase = []struct {
 		expectedPerson:  models.Person{},
 		expectedCourses: nil,
 		expectedErr:     apperror.BadRequest("Invalid Person type, must be either 'professor' or 'student'"),
+	},
+	{
+		name: "Multi Error",
+		input: models.PersonInput{
+			FirstName:   " ",
+			LastName:    " ",
+			Email:       "boldandbrash",
+			Age:         9,
+			Type:        "Foo",
+			CourseGuids: []string{},
+		},
+		expectedPerson:  models.Person{},
+		expectedCourses: nil,
+		expectedErr: apperror.Of([]error{
+			apperror.BadRequest("First Name must not be blank"),
+			apperror.BadRequest("Last Name must not be blank"),
+			apperror.BadRequest("Email must be a valid email adress"),
+			apperror.BadRequest("Must be at least 10 years old to enrol."),
+			apperror.BadRequest("Invalid Person type, must be either 'professor' or 'student'"),
+		}),
 	},
 }
 
