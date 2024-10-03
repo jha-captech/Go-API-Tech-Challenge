@@ -283,6 +283,21 @@ var personUpdateTestCase = []struct {
 		expectedPerson: testPerson,
 		expectedErr:    apperror.BadRequest("Must be at least 10 years old to enrol."),
 	},
+
+	{
+		name: "Type invalid",
+		guid: "1234",
+		input: models.PersonInput{
+			FirstName:   "Patrick",
+			LastName:    "Star",
+			Email:       "pstar@test.com",
+			Age:         120,
+			Type:        "Foo",
+			CourseGuids: nil,
+		},
+		expectedPerson: testPerson,
+		expectedErr:    apperror.BadRequest("Invalid Person type, must be either 'professor' or 'student'"),
+	},
 }
 
 func TestPersonUpdate(t *testing.T) {
@@ -527,6 +542,20 @@ var personCreateTestCase = []struct {
 		expectedPerson:  models.Person{},
 		expectedCourses: nil,
 		expectedErr:     apperror.BadRequest("Must be at least 10 years old to enrol."),
+	},
+	{
+		name: "Invalid Person Type",
+		input: models.PersonInput{
+			FirstName:   "Squidward",
+			LastName:    "Tentacles",
+			Email:       "boldandbrash@test.com",
+			Age:         90,
+			Type:        "Foo",
+			CourseGuids: []string{},
+		},
+		expectedPerson:  models.Person{},
+		expectedCourses: nil,
+		expectedErr:     apperror.BadRequest("Invalid Person type, must be either 'professor' or 'student'"),
 	},
 }
 

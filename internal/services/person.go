@@ -3,6 +3,7 @@ package services
 import (
 	"net/mail"
 	"net/url"
+	"slices"
 	"strings"
 
 	"github.com/google/uuid"
@@ -48,10 +49,9 @@ func (s Person) parse(input models.PersonInput, person *models.Person) []error {
 		errors = append(errors, apperror.BadRequest("Must be at least 10 years old to enrol."))
 	}
 
-	// TODO!!!
-	// if slices.Contains([]models.PersonType{models.Professor, models.Strudent}, input.Type) {
-	// 	errors = append(errors, apperror.BadRequest("Invalid Person type, must be either 'professor' or 'student'"))
-	// }
+	if !slices.Contains([]models.PersonType{models.Professor, models.Student}, models.PersonType(input.Type)) {
+		errors = append(errors, apperror.BadRequest("Invalid Person type, must be either 'professor' or 'student'"))
+	}
 
 	if len(errors) > 0 {
 		return errors
