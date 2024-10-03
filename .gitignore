@@ -22,7 +22,11 @@ go.work
 go.work.sum
 
 # env files
+.env
 **/.env
 **/.env.json
 
 **/.idea
+
+# Hide coverage reports
+*.cov

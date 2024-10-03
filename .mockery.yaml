@@ -1,0 +1,13 @@
+quiet: False
+keeptree: True
+disable-version-string: True
+with-expecter: True
+mockname: "{{.InterfaceName}}"
+filename: "{{.MockName}}.go"
+dir: "{{.InterfaceDir}}/mock"
+outpkg: jfmock
+packages:
+  jf.go.techchallenge/internal/repository:
+    interfaces:
+      Course:
+      Person:

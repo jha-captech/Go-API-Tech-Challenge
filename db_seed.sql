@@ -6,30 +6,35 @@ DROP TABLE IF EXISTS person;
 CREATE TABLE person
 (
     id         SERIAL PRIMARY KEY,
+    guid       VARCHAR(55)                                   NOT NULL,
     first_name TEXT                                          NOT NULL,
     last_name  TEXT                                          NOT NULL,
+    email      TEXT                                          NOT NULL,
     type       TEXT CHECK (type IN ('professor', 'student')) NOT NULL,
     age        INTEGER                                       NOT NULL
 );
 
-INSERT INTO person (first_name, last_name, type, age)
-VALUES ('Steve', 'Jobs', 'professor', 56),
-       ('Jeff', 'Bezos', 'professor', 60),
-       ('Larry', 'Page', 'student', 51),
-       ('Bill', 'Gates', 'student', 67),
-       ('Elon', 'Musk', 'student', 52);
+INSERT INTO person (guid, first_name, last_name, email, type, age)
+VALUES ('abcd', 'Steve', 'Jobs', 'sjobs@test.com', 'professor', 56),
+       ('efgh', 'Jeff', 'Bezos', 'jbezos@test.com', 'professor', 60),
+       ('ijkl', 'Larry', 'Page', 'lpage@test.com', 'student', 51),
+       ('mnop', 'Bill', 'Gates', 'bgates@test.com', 'student', 67),
+       ('qrst', 'Elon', 'Musk',  'emusk@test.com', 'student', 52),
+       ('uvwx', 'John', 'Flynn', 'jflynn@test.com', 'student', 52),
+       ('yzab', 'John', 'Flynn',  'jflynn2@test.com', 'student', 52);
 
 -- course
 CREATE TABLE course
 (
     id   SERIAL PRIMARY KEY,
+    guid       VARCHAR(55) NOT NULL,
     name TEXT NOT NULL
 );
 
-INSERT INTO course (name)
-VALUES ('Programming'),
-       ('Databases'),
-       ('UI Design');
+INSERT INTO course (guid, name)
+VALUES ('123a', 'Programming'),
+       ('456b', 'Databases'),
+       ('789c', 'UI Design');
 
 -- person_course
 CREATE TABLE person_course
